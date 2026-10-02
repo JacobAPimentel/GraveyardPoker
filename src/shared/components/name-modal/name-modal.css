@@ -1,0 +1,42 @@
+:host{
+    position: absolute;
+}
+
+dialog
+{
+    max-width: 30rem;
+    outline: none;
+
+    border: var(--border-subtle);
+    border-radius: 20px;
+
+    > div{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    &::backdrop 
+    {
+        background: rgba(0, 0, 0, 0.8);
+    }
+}
+
+form
+{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 10px;
+}
+
+input[type='text']
+{
+    text-align: center;
+    font-size: var(--button-font-size);;
+}
+
+.errors{
+    color: red;
+}

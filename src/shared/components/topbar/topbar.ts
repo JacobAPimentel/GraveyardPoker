@@ -1,9 +1,18 @@
-import { Component } from '@angular/core';
+import { Component, viewChild } from '@angular/core';
+import { NameModal } from '../name-modal/name-modal';
 
 @Component({
-  imports: [],
+  imports: [NameModal],
   selector: 'app-topbar',
   styleUrl: './topbar.css',
   templateUrl: './topbar.html',
 })
-export class Topbar {}
+export class Topbar 
+{
+  protected nameModal = viewChild.required(NameModal);
+
+  public settingsClicked()
+  {
+    this.nameModal().open();
+  }
+}

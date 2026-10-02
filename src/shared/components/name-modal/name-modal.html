@@ -1,0 +1,14 @@
+<dialog #nameDialog closedBy='none'>
+    <div>
+        <h2>Enter Your Display Name</h2>
+        <p>Your name will be saved in your browser and used for all future sessions. You can change your display name at any time from the settings.</p>
+        <form (submit)='onConfirm($event)'>
+            <input type='text' 
+                   placeholder='DISPLAY NAME' 
+                   autocomplete="off"
+                   [formField]='configForm' 
+                   [size]='30'>
+            <button type='submit' class='green-button'>Confirm</button>
+        </form>
+    </div>
+</dialog>

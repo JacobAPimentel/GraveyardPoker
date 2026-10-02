@@ -32,7 +32,19 @@ body{
     --color-text: black;
     --color-text-light: white;
 
+    --border-subtle: 2px solid var(--color-border-subtle);
+
+    --h1-font-size: 2rem;
+    --button-font-size: 1.25rem;
+
     font-family: Arial, Helvetica, sans-serif;
+}
+
+h1{
+    all: unset;
+    font-size: var(--h1-font-size);
+    font-weight: bold;
+    color: var(--color-text);
 }
 
 h2{
@@ -40,4 +52,27 @@ h2{
     font-size: 1.5rem;
     font-weight: bold;
     color: var(--color-text);
+}
+
+.img-button{
+    > img,
+    > svg {
+        display: block;
+    }
+}
+
+.green-button{
+    text-align: center;
+    font-size: inherit;
+    padding: 10px;
+
+    font-size: var(--button-font-size);
+    border-radius: 10px;
+
+    background-color: var(--color-button-primary);
+    color: var(--color-text-light);
+
+    &:hover{
+        filter: brightness(90%);
+    }
 }

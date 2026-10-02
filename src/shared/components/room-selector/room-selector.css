@@ -6,7 +6,7 @@
     width: 25rem;
 
     background-color: var(--color-container-background);
-    border: 2px solid var(--color-border-subtle);
+    border: var(--border-subtle);
     border-radius: 20px;
 }
 
@@ -19,24 +19,6 @@
 
     margin: 1rem;
     width: 100%;
-}
-
-.room-button{
-    text-align: center;
-    font-size: inherit;
-    padding: 10px;
-
-    font-size: 1.25rem;
-
-    width: 100%;
-    border-radius: 10px;
-
-    background-color: var(--color-button-primary);
-    color: var(--color-text-light);
-
-    &:hover{
-        filter: brightness(90%);
-    }
 }
 
 .room-container{
@@ -52,6 +34,11 @@
     }
 }
 
+.green-button
+{
+    width: 100%;
+}
+
 .input-text-button{
     width: 100%;
     display: flex;
@@ -60,8 +47,5 @@
     > input[type='text']{
         text-align: center;
         font-size: inherit;
-    }
-    > button{
-        font-size: 1.25rem;
     }
 }

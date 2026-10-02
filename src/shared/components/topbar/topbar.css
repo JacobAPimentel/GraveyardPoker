@@ -1,7 +1,18 @@
-:host{
+:host
+{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
     width: 100%;
     padding: 10px;
 
     background-color: var(--color-container-background);
-    border-bottom: 2px solid var(--color-border-subtle);
+    border-bottom: var(--border-subtle);
+}
+
+.right-align
+{
+    display: flex;
+    align-items: center;
 }
