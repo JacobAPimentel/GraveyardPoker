@@ -1,11 +1,10 @@
-import { AfterViewInit, Component, inject, OnInit, signal, viewChild } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { NameModal } from '../shared/components/name-modal/name-modal';
 import { Settings } from '../shared/services/settings';
 import { Topbar } from '../shared/components/topbar/topbar';
 
 @Component({
-  imports: [RouterOutlet, NameModal, Topbar],
+  imports: [RouterOutlet, Topbar],
   selector: 'app-root',
   styleUrl: './app.css',
   templateUrl: './app.html',

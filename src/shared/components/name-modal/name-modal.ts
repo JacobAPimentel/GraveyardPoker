@@ -22,7 +22,10 @@ export class NameModal implements AfterViewInit
     maxLength(schemaPath,30);
   });
 
-  ngAfterViewInit(): void 
+  /**
+   * If the user has a blank name, the modal will force open.
+   */
+  public ngAfterViewInit(): void 
   {
     if(this.settings.displayName() === '')
     {
@@ -30,13 +33,17 @@ export class NameModal implements AfterViewInit
     }
   }
 
+  /**
+   * Open up the modal.
+   */
   public open(): void
   {
     this.dialog().nativeElement.showModal();
   }
 
   /**
-  * Generates the guesses.
+  * Update the name in both the Settings service and the local storage.
+  * Will automatically close the modal after updating the name.
   * 
   * @param event - The submit event
   */

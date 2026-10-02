@@ -11,7 +11,10 @@ export class Topbar
 {
   protected nameModal = viewChild.required(NameModal);
 
-  public settingsClicked()
+  /**
+   * Upon up the name modal upon clicking settings.
+   */
+  public settingsClicked(): void
   {
     this.nameModal().open();
   }
