@@ -6,5 +6,6 @@
 }
 
 .router-outlet{
+    padding: 10px;
     flex: 1;
 }

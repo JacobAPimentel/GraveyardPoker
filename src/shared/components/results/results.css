@@ -1,0 +1,21 @@
+:host
+{
+    background-color: var(--color-container-background);
+    padding: 20px;
+
+    border: var(--border-subtle);
+    border-radius: 10px;
+}
+
+.average
+{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.final-result
+{
+    margin: 0;
+    font-size: 5rem;
+}
