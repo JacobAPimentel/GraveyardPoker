@@ -1,5 +1,7 @@
 :host{
     position: absolute;
+
+    --text-width: 23rem;
 }
 
 dialog
@@ -20,6 +22,11 @@ dialog
     {
         background: rgba(0, 0, 0, 0.8);
     }
+
+    p
+    {
+        width: var(--text-width);
+    }
 }
 
 form
@@ -34,9 +41,14 @@ form
 input[type='text']
 {
     text-align: center;
-    font-size: var(--button-font-size);;
+    font-size: var(--button-font-size);
+    width: var(--text-width);
 }
 
 .errors{
     color: red;
+}
+
+button{
+    width: 18rem;
 }
