@@ -1,0 +1,21 @@
+@let userVote = vote();
+
+<div class="card" [class.noVote]="userVote === null">
+    <p>
+        @if(userVote === null)
+        {
+            ?
+        }
+        @else
+        {
+            {{userVote}}
+        }
+    </p>
+</div>
+<p class="name">
+    {{name()}}
+    @if(name() === settings.displayName())
+    {
+        <p class="its-you">(You)</p>
+    }
+</p>

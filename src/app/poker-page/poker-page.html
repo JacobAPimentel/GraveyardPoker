@@ -1,0 +1,7 @@
+<div class="users">
+    @for (user of room.users | keyvalue; track $index)
+    {
+        <app-user-card [name]="user.value().name" [vote]="user.value().vote"/>
+    }
+</div>
+<app-choices />

@@ -1,0 +1,40 @@
+:host {
+    width: fit-content;
+    max-width: 100%;
+    padding: 10px;
+
+    display: flex;
+    justify-content: start;
+    gap: 20px;
+
+    overflow-x: auto;
+}
+
+.card
+{
+    width: 4.5rem;
+    height: 6rem;
+
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    font-size: 2rem;
+
+    background-color: var(--color-container-background);
+    color: black;
+
+    border: 3px black solid;
+    border-radius: 10px;
+
+    cursor: pointer;
+    transition: transform 0.15s ease;
+    &:hover {
+        transform: scale(1.05);
+        filter: brightness(0.9)
+    }
+}
+
