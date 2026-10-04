@@ -1,8 +1,8 @@
 @let userVote = vote();
 
-<div class="card" [class.noVote]="userVote === null">
+<div class="card" [class.noVote]="!userVote">
     <p>
-        @if(userVote === null)
+        @if(!userVote)
         {
             ?
         }
