@@ -1,7 +1,7 @@
-import { Service, signal, WritableSignal } from '@angular/core';
+import { Injectable, signal, WritableSignal } from '@angular/core';
 import { ServerState, User } from '../types';
 
-@Service()
+@Injectable()
 export class Room 
 {
     public userId = signal<string>(''); // the id of the user.
@@ -15,19 +15,6 @@ export class Room
     public userSignalList = signal<WritableSignal<User>[]>([]);
 
     public choices = signal([1, 2, 3, 5, 8, 13]);
-
-    /**
-     * Reset the service back to default;
-     */
-    public flushService(): void
-    {
-        this.userId.set('');
-        this.host.set('');
-        this.revealed.set(false);
-
-        this.userSignalList.set([]);
-        this.users = {};
-    }
 
     /**
      * Sets the user id.

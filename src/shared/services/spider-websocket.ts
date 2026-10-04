@@ -1,9 +1,9 @@
-import { inject, Service } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Settings } from './settings';
 import { Room } from './room';
 import { ServerState, User } from '../types';
 
-@Service()
+@Injectable()
 export class SpiderWebsocket 
 {
     private settings = inject(Settings);
@@ -68,8 +68,6 @@ export class SpiderWebsocket
     {
         this.socket?.close();
         this.socket = null;
-
-        this.room.flushService();
     }
 
     /**

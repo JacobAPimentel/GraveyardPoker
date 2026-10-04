@@ -10,6 +10,7 @@ import { SpiderWebsocket } from '../../shared/services/spider-websocket';
   imports: [UserCard, Choices, Results],
   selector: 'app-poker-page',
   styleUrl: './poker-page.css',
+  providers: [SpiderWebsocket,Room],
   templateUrl: './poker-page.html',
 })
 export class PokerPage implements AfterViewInit, OnDestroy
