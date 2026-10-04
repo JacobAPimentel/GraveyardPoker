@@ -1,9 +1,12 @@
-import { Injectable, signal, WritableSignal } from '@angular/core';
-import { ServerState, User } from '../types';
+import { inject, Injectable, signal, WritableSignal } from '@angular/core';
+import { Message, ServerState, User } from '../types';
+import { SpiderWebsocket } from './spider-websocket';
 
 @Injectable()
 export class Room 
 {
+    public socket = inject(SpiderWebsocket);
+
     public userId = signal<string>(''); // the id of the user.
     public host = signal<string>('');
     public revealed = signal<boolean>(false);
@@ -14,7 +17,18 @@ export class Room
     public users: Record<string,WritableSignal<User>> = {};
     public userSignalList = signal<WritableSignal<User>[]>([]);
 
-    public choices = signal([1, 2, 3, 5, 8, 13]);
+    public choices = [1, 2, 3, 5, 8, 13, 21];
+
+    /**
+     * Set up websocket listeners.
+     */
+    public constructor()
+    {
+        this.socket.initialJoin$.subscribe(this.onInitialJoin.bind(this));
+        this.socket.userConnected$.subscribe(this.addUser.bind(this));
+        this.socket.userDisconnected$.subscribe(this.removeUser.bind(this));
+        this.socket.userModified$.subscribe(this.updateUser.bind(this));
+    }
 
     /**
      * Sets the user id.
@@ -40,6 +54,18 @@ export class Room
 
         this.revealed.set(state.revealed);
         this.host.set(state.hostId);
+    }
+
+    /**
+     * On initial join, set up the state and user's id.
+     * 
+     * @param userId - The id of the user.
+     * @param state - The current server's state.
+     */
+    public onInitialJoin(joinState: {userId: string, state: ServerState}): void
+    {
+        this.setUserId(joinState.userId);
+        this.setState(joinState.state);
     }
     
     /**
@@ -79,5 +105,49 @@ export class Room
             return list;
         });
         delete this.users[id];
+    }
+
+    /**
+     * Something changed with a user. Update their entire state.
+     * 
+     * @param user - The user new state
+     */
+    public updateUser(user: User): void
+    {
+        this.users[user.id].set(user);
+    }
+
+    /**
+     * Send a message to the web socket server.
+     * 
+     * @param userId - The user idea that performed the action. Will fiter out any output made by another user.
+     * @param message - The message that will be sent to the server.
+     */
+    public sendToSocket(userId: string, message: Message): void 
+    {
+        if(userId !== this.userId()) return;
+        this.socket.send(message);
+    }
+
+    /**
+     * A user has voted.
+     * 
+     * @param userId - The user who voted.
+     * @param vote - The vote index
+     */
+    public voted(userId: string, vote: number): void
+    {
+        this.users[userId].update((val: User) => 
+        {
+             return {
+                ...val,
+                vote
+            };
+        });
+
+        this.sendToSocket(userId,{
+            type: 'voted',
+            vote
+        });
     }
 }

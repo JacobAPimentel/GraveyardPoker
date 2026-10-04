@@ -1,5 +1,7 @@
 import { Component, inject, input } from '@angular/core';
 import { Settings } from '../../services/settings';
+import { User } from '../../types';
+import { Room } from '../../services/room';
 
 @Component({
   imports: [],
@@ -10,7 +12,7 @@ import { Settings } from '../../services/settings';
 export class UserCard 
 {
   protected settings = inject(Settings);
+  protected room = inject(Room);
   
-  public name = input<string>('');
-  public vote = input<number | null>(null);
+  public user = input.required<User>();
 }

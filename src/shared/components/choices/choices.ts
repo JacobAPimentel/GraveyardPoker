@@ -10,4 +10,14 @@ import { Room } from '../../services/room';
 export class Choices 
 {
   protected room = inject(Room);
+
+  /**
+   * User made a choice. Select it.
+   * 
+   * @param choiceIdx - The index of the chosen card.
+   */
+  protected madeChoice(choiceIdx: number): void
+  {
+    this.room.voted(this.room.userId(),choiceIdx);
+  }
 }

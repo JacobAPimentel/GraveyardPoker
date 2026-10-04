@@ -1,20 +1,21 @@
-@let userVote = vote();
+@let userVote = this.user().vote;
+@let noVote = userVote === null || userVote === undefined;
 
-<div class="card" [class.noVote]="!userVote">
+<div class="card" [class.noVote]="noVote">
     <p>
-        @if(!userVote)
+        @if(noVote)
         {
             ?
         }
         @else
         {
-            {{userVote}}
+            {{room.choices[userVote]}}
         }
     </p>
 </div>
 <p class="name">
-    {{name()}}
-    @if(name() === settings.displayName())
+    {{user().name}}
+    @if(user().id === room.userId())
     {
         <p class="its-you">(You)</p>
     }

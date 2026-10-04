@@ -1,4 +1,4 @@
-@for(choice of room.choices(); track $index)
+@for(choice of room.choices; let i = $index ; track i)
 {
-    <div class="card">{{choice}}</div>
+    <button class="card" (click)="madeChoice(i)">{{choice}}</button>
 }

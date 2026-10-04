@@ -1,15 +1,20 @@
 import { inject, Injectable } from '@angular/core';
 import { Settings } from './settings';
-import { Room } from './room';
 import { ServerState, User } from '../types';
+import { Subject } from 'rxjs';
 
 @Injectable()
 export class SpiderWebsocket 
 {
     private settings = inject(Settings);
-    private room = inject(Room);
     
     private socket: WebSocket | null = null;
+
+    //LISTENERS
+    public initialJoin$ = new Subject<{userId: string, state: ServerState}>();
+    public userConnected$ = new Subject<User>();
+    public userDisconnected$ = new Subject<string>();
+    public userModified$ = new Subject<User>();
 
     /**
      * Connect to the room and bind event listeners.
@@ -42,9 +47,10 @@ export class SpiderWebsocket
 
             switch(message.type)
             {
-                case 'initialJoin': this.onInitialJoin(message.id,message.state); break;
-                case 'connected': this.onConnect(message.user); break;
-                case 'disconnected': this.onDisconnect(message.userId); break;
+                case 'initialJoin': this.initialJoin$.next(message); break;
+                case 'connected': this.userConnected$.next(message.user); break;
+                case 'disconnected': this.userDisconnected$.next(message.userId); break;
+                case 'user-modified': this.userModified$.next(message.user); break;
             }
         });
     }
@@ -68,37 +74,5 @@ export class SpiderWebsocket
     {
         this.socket?.close();
         this.socket = null;
-    }
-
-    /**
-     * On initial join, set up the state and user's id.
-     * 
-     * @param userId - The id of the user.
-     * @param state - The current server's state.
-     */
-    public onInitialJoin(userId: string, state: ServerState): void
-    {
-        this.room.setUserId(userId);
-        this.room.setState(state);
-    }
-
-     /**
-     * A User has joined.
-     * 
-     * @param userId - The user who left.
-     */
-    public onConnect(user: User): void
-    {
-        this.room.addUser(user);
-    }
-
-    /**
-     * User left.
-     * 
-     * @param userId - The user who left.
-     */
-    public onDisconnect(userId: string): void
-    {
-        this.room.removeUser(userId);
     }
 }
