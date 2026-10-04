@@ -1,15 +1,14 @@
 @let userVote = this.user().vote;
-@let noVote = userVote === null || userVote === undefined;
 
-<div class="card" [class.noVote]="noVote">
+<div class="card" [class.noVote]="noVote()" [class.hideVote]="hideVote()">
     <p>
-        @if(noVote)
+        @if(noVote())
         {
             ?
         }
-        @else
+        @else if(!hideVote())
         {
-            {{room.choices[userVote]}}
+            {{room.choices[userVote!]}}
         }
     </p>
 </div>
@@ -17,6 +16,6 @@
     {{user().name}}
     @if(user().id === room.userId())
     {
-        <p class="its-you">(You)</p>
+        <span class="its-you">(You)</span>
     }
 </p>

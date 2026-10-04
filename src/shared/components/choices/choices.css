@@ -38,3 +38,7 @@
     }
 }
 
+.selected{
+    background-color: black;
+    color: white;
+}

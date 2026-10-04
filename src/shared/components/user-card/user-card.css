@@ -17,8 +17,9 @@
     height: 8rem;
     background-color: black;
     color: white;
+    border: 3px black solid;
     border-radius: 10px;
-
+    
     p{
         user-select: none;
         font-size: 3rem;
@@ -31,11 +32,32 @@
     border: 3px black dashed
 }
 
+.hideVote {
+    z-index: 0;
+    background:
+        repeating-linear-gradient(
+            45deg,
+            transparent 0,
+            transparent 15px,
+            black 15px,
+            black 18px
+        ),
+        repeating-linear-gradient(
+            -45deg,
+            transparent 0,
+            transparent 15px,
+            black 15px,
+            black 18px
+        ),
+        rgb(70, 70, 70);
+}
+
 .name{
     margin: 0;
 }
 
 .its-you{
+    display: block;
     margin-top: 5px;
     font-weight: bold;
 }
