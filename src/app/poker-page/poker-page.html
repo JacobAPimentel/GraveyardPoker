@@ -1,7 +1,7 @@
 <div class="users">
-    @for (user of room.users | keyvalue; track $index)
+    @for (user of room.userSignalList(); track user().id)
     {
-        <app-user-card [name]="user.value().name" [vote]="user.value().vote"/>
+        <app-user-card [name]="user().name" [vote]="user().vote"/>
     }
 </div>
 <div class="results-container">

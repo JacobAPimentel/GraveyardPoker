@@ -1,6 +1,5 @@
 import { AfterViewInit, Component, inject, OnDestroy } from '@angular/core';
 import { Room } from '../../shared/services/room';
-import { KeyValuePipe } from '@angular/common';
 import { UserCard } from '../../shared/components/user-card/user-card';
 import { Choices } from '../../shared/components/choices/choices';
 import { Results } from '../../shared/components/results/results';
@@ -8,7 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { SpiderWebsocket } from '../../shared/services/spider-websocket';
 
 @Component({
-  imports: [KeyValuePipe, UserCard, Choices, Results],
+  imports: [UserCard, Choices, Results],
   selector: 'app-poker-page',
   styleUrl: './poker-page.css',
   templateUrl: './poker-page.html',
@@ -21,6 +20,12 @@ export class PokerPage implements AfterViewInit, OnDestroy
 
   protected room = inject(Room);
 
+  // Fallback function to disconnect the socket if it page were to unload.
+  private unloadListener = (): void =>
+  {
+      this.websocket.disconnect();
+  };
+
   /**
    * Connect to the server.
    */
@@ -30,6 +35,9 @@ export class PokerPage implements AfterViewInit, OnDestroy
     if(roomId)
     {
       this.websocket.connect(roomId);
+
+      // Force disconnect if the page unloads.
+      window.addEventListener('beforeunload', this.unloadListener);
     }
     else //No id, go back to home page.
     {
@@ -43,5 +51,6 @@ export class PokerPage implements AfterViewInit, OnDestroy
   public ngOnDestroy(): void 
   {
     this.websocket.disconnect();
+    window.removeEventListener('beforeunload',this.unloadListener);
   }
 }
