@@ -1,5 +1,3 @@
-@let userVote = this.user().vote;
-
 <div class="card" [class.noVote]="noVote()" [class.hideVote]="hideVote()">
     <p>
         @if(noVote())
@@ -8,14 +6,14 @@
         }
         @else if(!hideVote())
         {
-            {{room.choices[userVote!]}}
+            {{room.choices[this.user().vote!]}}
         }
     </p>
 </div>
 <p class="name">
     {{user().name}}
-    @if(user().id === room.userId())
+    @if(this.label())
     {
-        <span class="its-you">(You)</span>
+        <span class="user-label">{{this.label()}}</span>
     }
 </p>
