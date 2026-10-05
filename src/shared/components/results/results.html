@@ -12,7 +12,7 @@
                 THE AVERAGE IS
             }
         </h1>
-        <p class="final-result" [style.color]="getAverageColor(result.std / 3)">
+        <p class="final-result" [style.color]="getAverageColor(result.std / ((this.room.choices.length - 1) / 2))">
             {{result.mean}}
         </p>
         <h2>
