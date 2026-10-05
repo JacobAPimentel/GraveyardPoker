@@ -17,6 +17,8 @@ export class SpiderWebsocket
     private socket: WebSocket | null = null;
 
     //LISTENERS
+    public forceDisconnect$ = new Subject<void>();
+
     public initialJoin$ = new Subject<{userId: string, state: ServerState}>();
     public userConnected$ = new Subject<User>();
     public userDisconnected$ = new Subject<string>();
@@ -41,6 +43,13 @@ export class SpiderWebsocket
         this.socket.addEventListener('close', () => 
         {
             console.log('Disconnected from room');
+
+            // If it is still "connected", that means that a force connection occurred.
+            if(this.connected())
+            {
+                this.forceDisconnect$.complete();
+                this.disconnect();
+            }
         });
 
         this.socket.addEventListener('error', error => 

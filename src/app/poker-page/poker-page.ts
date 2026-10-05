@@ -40,6 +40,11 @@ export class PokerPage implements OnDestroy
 
     this.connectToServer();
     this.shouldIConnect.destroy();
+
+    this.websocket.forceDisconnect$.subscribe(
+    {
+      complete: () => this.router.navigate(['.'], {state: {error: 'Lost connection to the host.'}})
+    });
   });
 
     /**
