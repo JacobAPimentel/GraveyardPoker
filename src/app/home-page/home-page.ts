@@ -11,9 +11,9 @@ import { Router } from '@angular/router';
 })
 export class HomePage 
 {
-  protected router = inject(Router);
+  private router = inject(Router);
   protected settings = inject(Settings);
 
   //Check if there are any error loaded in.
-  protected error = this.router.currentNavigation()?.extras.state?.['error'];
+  protected error = this.router.currentNavigation()?.extras.state?.['errorMsg'];
 }

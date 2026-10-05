@@ -18,6 +18,7 @@ export class SpiderWebsocket
 
     //LISTENERS
     public forceDisconnect$ = new Subject<void>();
+    public websocketErrored$ = new Subject<void>();
 
     public initialJoin$ = new Subject<{userId: string, state: ServerState}>();
     public userConnected$ = new Subject<User>();
@@ -55,6 +56,8 @@ export class SpiderWebsocket
         this.socket.addEventListener('error', error => 
         {
             console.error('WebSocket error:', error);
+
+            this.websocketErrored$.complete();
         });
 
         // Main web socket messages

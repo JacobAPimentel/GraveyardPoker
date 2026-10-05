@@ -43,7 +43,12 @@ export class PokerPage implements OnDestroy
 
     this.websocket.forceDisconnect$.subscribe(
     {
-      complete: () => this.router.navigate(['.'], {state: {error: 'Lost connection to the host.'}})
+      complete: () => this.router.navigate(['.'], {state: {errorMsg: 'Lost connection to the host.'}})
+    });
+
+    this.websocket.websocketErrored$.subscribe(
+    {
+      complete: () => this.router.navigate(['graveyard'], {state: {errorCode: 503,errorMsg: 'Service Unavailable'}})
     });
   });
 
@@ -58,7 +63,7 @@ export class PokerPage implements OnDestroy
     if(roomId)
     {
       this.websocket.connect(roomId);
-
+      
       // Force disconnect if the page unloads.
       window.addEventListener('beforeunload', this.unloadListener);
     }

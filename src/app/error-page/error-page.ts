@@ -1,4 +1,5 @@
-import { Component, input } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   imports: [],
@@ -8,6 +9,8 @@ import { Component, input } from '@angular/core';
 })
 export class ErrorPage 
 {
-  public errorCode = input(404);
-  public errorMsg = input('Page Not Found');
+  private router = inject(Router);
+  
+  public errorCode = this.router.currentNavigation()?.extras.state?.['errorCode'] ?? 404;
+  public errorMsg = this.router.currentNavigation()?.extras.state?.['errorMsg'] ?? 'Page Not Found';
 }
