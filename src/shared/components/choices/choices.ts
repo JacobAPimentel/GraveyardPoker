@@ -13,12 +13,15 @@ export class Choices
 
   /**
    * User made a choice. Select it.
+   * If the user selected the same card, it will unselect it.
    * 
    * @param choiceIdx - The index of the chosen card.
    */
   protected madeChoice(choiceIdx: number): void
   {
-    this.room.voted(this.room.userId(),choiceIdx);
+    const vote = this.isSelected(choiceIdx) ? null : choiceIdx;
+    
+    this.room.voted(this.room.userId(),vote);
   }
 
   /**

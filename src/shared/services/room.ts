@@ -151,7 +151,7 @@ export class Room
      * @param userId - The user who voted.
      * @param vote - The vote index
      */
-    public voted(userId: string, vote: number): void
+    public voted(userId: string, vote: number | null): void
     {
         this.users[userId].update((val: User) => 
         {
