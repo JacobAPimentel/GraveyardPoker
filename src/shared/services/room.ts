@@ -1,4 +1,4 @@
-import { inject, Injectable, signal, WritableSignal } from '@angular/core';
+import { computed, inject, Injectable, signal, WritableSignal } from '@angular/core';
 import { Message, ServerState, User } from '../types';
 import { SpiderWebsocket } from './spider-websocket';
 
@@ -20,6 +20,19 @@ export class Room
     public choices = [1, 2, 3, 5, 8, 13, 21];
 
     /**
+     * @returns 
+     * Get the current user's state. May return nil if not yet loaded.
+     */
+    public getUserState = computed(() => this.users[this.userId()]?.());
+
+    /**
+     * Is the user a host?
+     * 
+     * @returns - True if the user is the host.
+     */
+    public isHost = computed(() => this.host() === this.userId());
+
+    /**
      * Set up websocket listeners.
      */
     public constructor()
@@ -28,6 +41,8 @@ export class Room
         this.socket.userConnected$.subscribe(this.addUser.bind(this));
         this.socket.userDisconnected$.subscribe(this.removeUser.bind(this));
         this.socket.userModified$.subscribe(this.updateUser.bind(this));
+        this.socket.revealVotes$.subscribe(this.revealVotes.bind(this));
+        this.socket.resetRound$.subscribe(this.resetRound.bind(this));
     }
 
     /**
@@ -121,9 +136,10 @@ export class Room
      * Send a message to the web socket server.
      * 
      * @param userId - The user idea that performed the action. Will fiter out any output made by another user.
+     *                 This is used for actions that can be repeated by the first caller and then listeners afterwards, without causing a chain reaction.
      * @param message - The message that will be sent to the server.
      */
-    public sendToSocket(userId: string, message: Message): void 
+    public sendToSocket(userId: string | void, message: Message): void 
     {
         if(userId !== this.userId()) return;
         this.socket.send(message);
@@ -148,6 +164,41 @@ export class Room
         this.sendToSocket(userId,{
             type: 'voted',
             vote
+        });
+    }
+
+    /**
+     * Reveal the votes.
+     */
+    public revealVotes(userId: string | void): void
+    {
+        this.revealed.set(true);
+
+        this.sendToSocket(userId,{
+            type: 'reveal'
+        });
+    }
+
+     /**
+     * Reset the round. Will rely soley on the server response to do a full reset.
+     */
+    public resetRound(userId: string | void): void
+    {
+        this.revealed.set(false);
+
+        for (const user of Object.values(this.users)) 
+        {
+            user.update((val: User) => 
+            {
+                return {
+                    ...val,
+                    vote: null
+                };
+            });
+        }
+
+        this.sendToSocket(userId,{
+            type: 'reset'
         });
     }
 }

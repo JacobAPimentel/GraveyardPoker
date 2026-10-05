@@ -54,4 +54,19 @@ export class PokerPage implements AfterViewInit, OnDestroy
     this.websocket.disconnect();
     window.removeEventListener('beforeunload',this.unloadListener);
   }
+
+  /**
+   * The main button was clicked. Decide between flushing or revealing votes.
+   */
+  public onMainButtonClick(): void
+  {
+    if(this.room.revealed())
+    {
+      this.room.resetRound(this.room.userId());
+    }
+    else
+    {
+      this.room.revealVotes(this.room.userId());
+    }
+  }
 }

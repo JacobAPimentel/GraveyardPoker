@@ -6,6 +6,20 @@
 </div>
 <div class="results-container">
     <app-results />
-    <button class="green-button">REVEAL VOTES</button>
+    @if(this.room.isHost())
+    {
+        <button class="green-button"
+                [class.reset-round]="this.room.revealed()"
+                (click)="onMainButtonClick()">
+            @if(this.room.revealed())
+            {
+                RESET ROUND
+            }
+            @else
+            {
+                REVEAL VOTES
+            }
+        </button>
+    }
 </div>
 <app-choices />

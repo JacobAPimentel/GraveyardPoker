@@ -15,6 +15,8 @@ export class SpiderWebsocket
     public userConnected$ = new Subject<User>();
     public userDisconnected$ = new Subject<string>();
     public userModified$ = new Subject<User>();
+    public revealVotes$ = new Subject<void>();
+    public resetRound$ = new Subject<void>();
 
     /**
      * Connect to the room and bind event listeners.
@@ -51,6 +53,8 @@ export class SpiderWebsocket
                 case 'connected': this.userConnected$.next(message.user); break;
                 case 'disconnected': this.userDisconnected$.next(message.userId); break;
                 case 'user-modified': this.userModified$.next(message.user); break;
+                case 'reveal': this.revealVotes$.next(); break;
+                case 'reset': this.resetRound$.next(); break;
             }
         });
     }

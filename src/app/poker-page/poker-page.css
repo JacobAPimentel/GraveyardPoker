@@ -12,12 +12,15 @@
     gap: 30px;
 }
 
-.results-container
-{
+.results-container{
     width: 100%;
     max-width: 33rem;
 
     display: flex;
     flex-direction: column;
     gap: 10px;
+}
+
+.reset-round{
+    background-color: crimson;
 }

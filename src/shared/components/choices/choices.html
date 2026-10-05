@@ -1,8 +1,15 @@
-@for(choice of room.choices; let i = $index ; track i)
+@if(this.room.revealed())
 {
-    <button class="card" 
-            [class.selected]="isSelected(i)"
-            (click)="madeChoice(i)">
-            {{choice}}
-    </button>
+    <h2 class="waiting-msg">Waiting for round to reset</h2>
 }
+<div class="cards">
+    @for(choice of room.choices; let i = $index ; track i)
+    {
+        <button class="card" 
+                [class.selected]="isSelected(i)"
+                [class.disabled]="this.room.revealed()"
+                (click)="madeChoice(i)">
+                {{choice}}
+        </button>
+    }
+</div>
