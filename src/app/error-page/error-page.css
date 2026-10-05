@@ -1,0 +1,39 @@
+:host{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    height: 100%;
+}
+
+.flex-item{
+    position: relative;
+    max-width: 750px;
+    width: 90%;
+}
+
+img{
+    width: 100%;
+}
+
+.msg-and-code{
+    position: absolute;
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+
+    >h1{
+        font-size: min(24cqw,200px);
+    }
+
+    >p{
+        margin: 0;
+        font-size: 2rem;
+    }
+}
