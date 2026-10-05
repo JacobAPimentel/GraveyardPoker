@@ -26,7 +26,7 @@ export class NameModal implements AfterViewInit
    */
   public ngAfterViewInit(): void 
   {
-    if(this.settings.displayName() === '')
+    if(!this.settings.displayName())
     {
       this.open();
     }
@@ -54,6 +54,14 @@ export class NameModal implements AfterViewInit
     this.settings.displayName.set(this.nameModel());
     localStorage.setItem('displayName',this.nameModel());
     
+    this.close();
+  }
+
+  /**
+   * Close the dialog box.
+   */
+  protected close(): void
+  {
     this.dialog().nativeElement.close();
   }
 }

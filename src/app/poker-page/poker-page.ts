@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, effect, inject, OnDestroy } from '@angular/core';
 import { Room } from '../../shared/services/room';
 import { UserCard } from '../../shared/components/user-card/user-card';
 import { Choices } from '../../shared/components/choices/choices';
@@ -6,6 +6,7 @@ import { Results } from '../../shared/components/results/results';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SpiderWebsocket } from '../../shared/services/spider-websocket';
 import { LoadingCircle } from '../../shared/components/loading-circle/loading-circle';
+import { Settings } from '../../shared/services/settings';
 
 @Component({
   imports: [UserCard, Choices, Results, LoadingCircle],
@@ -14,8 +15,9 @@ import { LoadingCircle } from '../../shared/components/loading-circle/loading-ci
   providers: [SpiderWebsocket,Room],
   templateUrl: './poker-page.html',
 })
-export class PokerPage implements OnInit, OnDestroy
+export class PokerPage implements OnDestroy
 {
+  public settings = inject(Settings);
   public router = inject(Router);
   public route = inject(ActivatedRoute);
   public websocket = inject(SpiderWebsocket);
@@ -29,9 +31,23 @@ export class PokerPage implements OnInit, OnDestroy
   };
 
   /**
-   * Connect to the server.
+   * Determine if the page should automatically connect or not. If there is NOT a display name, then do not connect
+   * until after the user sets their name.
    */
-  public ngOnInit(): void 
+  private shouldIConnect = effect(() => 
+  {
+    if(!this.settings.displayName()) return;
+
+    this.connectToServer();
+    this.shouldIConnect.destroy();
+  });
+
+    /**
+   * Connect to the server.
+   * 
+   * If there is no room code as part of the query, navigate back to the home page.
+   */
+  public connectToServer(): void
   {
     const roomId = this.route.snapshot.queryParamMap.get('id');
     if(roomId)

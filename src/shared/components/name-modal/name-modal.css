@@ -4,8 +4,7 @@
     --text-width: 23rem;
 }
 
-dialog
-{
+dialog{
     max-width: 30rem;
     outline: none;
 
@@ -13,6 +12,7 @@ dialog
     border-radius: 20px;
 
     > div{
+        padding: 10px;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -29,8 +29,7 @@ dialog
     }
 }
 
-form
-{
+form{
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -38,8 +37,8 @@ form
     gap: 10px;
 }
 
-input[type='text']
-{
+input[type='text']{
+    padding: 5px;
     text-align: center;
     font-size: var(--button-font-size);
     width: var(--text-width);
@@ -49,6 +48,14 @@ input[type='text']
     color: red;
 }
 
-button{
+button[type='submit']{
     width: 18rem;
+}
+
+#closeButton{
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    padding: 3px;
 }

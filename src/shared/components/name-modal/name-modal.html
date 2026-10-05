@@ -1,4 +1,13 @@
-<dialog #nameDialog closedBy='none'>
+@let hasName = !!settings.displayName();
+<dialog #nameDialog [attr.closedbY]='hasName ? "any" : "none"'>
+    @if(hasName)
+    {
+        <button (click)="close()" id="closeButton" class=".img-button">
+            <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" fill="#D0342C">
+                <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
+            </svg>
+        </button>
+    }
     <div>
         <h2>Enter Your Display Name</h2>
         <p>Your name will be saved in your browser and used for all future sessions. You can change your display name at any time from the settings.</p>
@@ -8,6 +17,15 @@
                    autocomplete="off"
                    [formField]='configForm' 
                    [size]='30'>
+            @if(configForm().invalid() && configForm().touched())
+            {
+                <div class="error">
+                    @for(error of configForm().errors(); track error)
+                    {
+                        <span>{{error.message}}</span>
+                    }
+                </div>
+            }
             <button type='submit' class='green-button'>Confirm</button>
         </form>
     </div>
