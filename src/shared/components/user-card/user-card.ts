@@ -1,4 +1,4 @@
-import { Component, computed, inject, input } from '@angular/core';
+import { Component, computed, inject, input, untracked } from '@angular/core';
 import { Settings } from '../../services/settings';
 import { User } from '../../types';
 import { Room } from '../../services/room';
@@ -32,6 +32,6 @@ export class UserCard
   {
     return !this.noVote()
            && !this.room.revealed() 
-           && this.user().id !== this.room.userId();
+           && untracked(this.user).id !== untracked(this.room.userId);
   });
 }
