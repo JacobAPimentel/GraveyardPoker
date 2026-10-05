@@ -72,3 +72,7 @@ h2{
         filter: brightness(90%);
     }
 }
+
+.error{
+    color: red;
+}

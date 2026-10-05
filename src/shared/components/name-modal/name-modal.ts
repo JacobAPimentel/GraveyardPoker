@@ -13,7 +13,6 @@ export class NameModal implements AfterViewInit
   private settings = inject(Settings);
   private dialog = viewChild.required<ElementRef<HTMLDialogElement>>('nameDialog');
 
-
   protected nameModel = signal<string>('');
   protected configForm = form(this.nameModel, (schemaPath) => 
   {

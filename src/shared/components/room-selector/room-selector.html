@@ -16,9 +16,21 @@
     <div>
         <h2>Join Room</h2>
         <p>Join an already created room.</p>
-        <div class = "input-text-button">
-            <input type="text" placeholder="CODE" maxLength="5" size="5"/>
-            <button class="green-button">Join Room</button>
-        </div>
+        <form (submit)='onJoinRoom($event)' class = "input-text-button">
+            <input [formField]='configForm' type="text" placeholder="CODE" size="5" autocomplete="off"/>
+            <button class="green-button"
+                    type='submit'>
+                    Join Room
+            </button>
+        </form>
+        @if(configForm().invalid() && configForm().touched())
+        {
+            <div class="error" [style.margin-top]="'5px'">
+                @for(error of configForm().errors(); track error)
+                {
+                    <span>{{error.message}}</span>
+                }
+            </div>
+        }
     </div>   
 </div>
