@@ -1,5 +1,6 @@
 :host
 {
+    min-height: 13rem;
     background-color: var(--color-container-background);
     padding: 20px;
 
@@ -7,7 +8,7 @@
     border-radius: 10px;
 }
 
-.average
+.flexDisplay
 {
     display: flex;
     flex-direction: column;

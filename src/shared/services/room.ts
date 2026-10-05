@@ -201,4 +201,26 @@ export class Room
             type: 'reset'
         });
     }
+
+    /**
+     * Calculate and return the results
+     * 
+     * @returns 
+     * Mean is based on the actual vote.
+     * The standard deviation is based on the card indexes.
+     */
+    public getResults(): {mean: number, std: number}
+    {
+        const indexes = this.userSignalList().map(user => user().vote)
+                       .filter(idx => idx !== null && idx !== undefined);
+        if(indexes.length === 0) return {mean: 0, std: 0};
+
+        const idxMean = indexes.reduce((a,b) => a + b,0) / indexes.length;
+        const std = Math.sqrt(indexes.map(x => Math.pow(x - idxMean, 2)).reduce((a, b) => a + b) / indexes.length);
+
+        const voteMean = indexes.map(idx => this.choices[idx])
+            .reduce((a,b) => a + b,0) / indexes.length;
+
+        return {mean: +(voteMean.toFixed(2)), std: +(std.toFixed(2))};
+    }
 }

@@ -1,5 +1,45 @@
-<div class="average">
-    <h1>THE AVERAGE IS...</h1>
-    <p class="final-result">13.5</p>
-    <h2>with a standard deviation of 15.</h2>
-</div>
+@if(this.room.revealed())
+{
+    <div class="flexDisplay">
+        @let result = this.room.getResults();
+        <h1>
+            @if(result.std === 0)
+            {
+                AN UNANIMOUS DECISION!
+            }
+            @else
+            {
+                THE AVERAGE IS
+            }
+        </h1>
+        <p class="final-result" [style.color]="getAverageColor(result.std / 3)">
+            {{result.mean}}
+        </p>
+        <h2>
+            @if(result.std === 0)
+            {
+                Congratulations!
+            }
+            @else
+            {
+                {{`with a standard deviation of ${result.std}.`}}
+            }
+        </h2>
+    </div>
+}
+@else 
+{
+    <div class="flexDisplay">
+        <h1> Cast Your Votes!</h1>
+        <h3>
+            @if(this.room.isHost())
+            {
+                Click "Reveal Votes" below once voting is done.
+            }
+            @else
+            {
+                The host will reveal the results after voting.   
+            }
+        </h3>
+    </div>
+}
