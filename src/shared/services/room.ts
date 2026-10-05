@@ -23,7 +23,7 @@ export class Room
      * @returns 
      * Get the current user's state. May return nil if not yet loaded.
      */
-    public getUserState = computed(() => this.users[this.userId()]?.());
+    public getUserState = computed(() => this.users[this.userId()]());
 
     /**
      * Is the user a host?

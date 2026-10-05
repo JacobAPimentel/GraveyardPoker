@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Room } from '../../services/room';
 
 @Component({
@@ -29,6 +29,6 @@ export class Choices
    */
   protected isSelected(choiceIdx: number): boolean
   {
-    return this.room.getUserState()?.vote === choiceIdx;
+    return this.room.getUserState().vote === choiceIdx;
   }
 }

@@ -1,4 +1,4 @@
-:host{
+.main-page{
     gap: 30px;
     display: flex;
     flex-direction: column;
@@ -23,4 +23,11 @@
 
 .reset-round{
     background-color: crimson;
+}
+
+.loading{
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

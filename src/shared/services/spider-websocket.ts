@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { Settings } from './settings';
 import { ServerState, User } from '../types';
 import { Subject } from 'rxjs';
@@ -6,6 +6,12 @@ import { Subject } from 'rxjs';
 @Injectable()
 export class SpiderWebsocket 
 {
+    /** 
+     * Determine if the socket is connected. 
+     * This will get set on initialJoin rather than "connected" afterwards, so we know
+     * that everything is already loaded.
+    */
+    public connected = signal(false);
     private settings = inject(Settings);
     
     private socket: WebSocket | null = null;
@@ -49,7 +55,9 @@ export class SpiderWebsocket
 
             switch(message.type)
             {
-                case 'initialJoin': this.initialJoin$.next(message); break;
+                case 'initialJoin': this.initialJoin$.next(message);
+                                    this.connected.set(true);
+                                    break;
                 case 'connected': this.userConnected$.next(message.user); break;
                 case 'disconnected': this.userDisconnected$.next(message.userId); break;
                 case 'user-modified': this.userModified$.next(message.user); break;
@@ -78,5 +86,6 @@ export class SpiderWebsocket
     {
         this.socket?.close();
         this.socket = null;
+        this.connected.set(false);
     }
 }

@@ -1,25 +1,36 @@
-<div class="users">
-    @for (user of room.userSignalList(); track user().id)
-    {
-        <app-user-card [user]="user()"/>
-    }
-</div>
-<div class="results-container">
-    <app-results />
-    @if(this.room.isHost())
-    {
-        <button class="green-button"
-                [class.reset-round]="this.room.revealed()"
-                (click)="onMainButtonClick()">
-            @if(this.room.revealed())
+@if(!websocket.connected())
+{
+    <div class="loading">
+        <app-loading-circle />
+    </div>
+}
+@else
+{
+    <div class="main-page">
+        <div class="users">
+            @for (user of room.userSignalList(); track user().id)
             {
-                RESET ROUND
+                <app-user-card [user]="user()"/>
             }
-            @else
+        </div>
+        <div class="results-container">
+            <app-results />
+            @if(this.room.isHost())
             {
-                REVEAL VOTES
+                <button class="green-button"
+                        [class.reset-round]="this.room.revealed()"
+                        (click)="onMainButtonClick()">
+                    @if(this.room.revealed())
+                    {
+                        RESET ROUND
+                    }
+                    @else
+                    {
+                        REVEAL VOTES
+                    }
+                </button>
             }
-        </button>
-    }
-</div>
-<app-choices />
+        </div>
+        <app-choices />
+    </div>
+}

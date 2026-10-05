@@ -1,19 +1,20 @@
-import { AfterViewInit, Component, inject, OnDestroy } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { Room } from '../../shared/services/room';
 import { UserCard } from '../../shared/components/user-card/user-card';
 import { Choices } from '../../shared/components/choices/choices';
 import { Results } from '../../shared/components/results/results';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SpiderWebsocket } from '../../shared/services/spider-websocket';
+import { LoadingCircle } from '../../shared/components/loading-circle/loading-circle';
 
 @Component({
-  imports: [UserCard, Choices, Results],
+  imports: [UserCard, Choices, Results, LoadingCircle],
   selector: 'app-poker-page',
   styleUrl: './poker-page.css',
   providers: [SpiderWebsocket,Room],
   templateUrl: './poker-page.html',
 })
-export class PokerPage implements AfterViewInit, OnDestroy
+export class PokerPage implements OnInit, OnDestroy
 {
   public router = inject(Router);
   public route = inject(ActivatedRoute);
@@ -30,7 +31,7 @@ export class PokerPage implements AfterViewInit, OnDestroy
   /**
    * Connect to the server.
    */
-  public ngAfterViewInit(): void 
+  public ngOnInit(): void 
   {
     const roomId = this.route.snapshot.queryParamMap.get('id');
     if(roomId)
