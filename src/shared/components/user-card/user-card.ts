@@ -44,7 +44,7 @@ export class UserCard
 
     if(userId === this.room.userId())
     {
-      if(this.room.isHost()) return '(You are the host)';
+      if(this.room.isHost()) return 'You (Host)';
       return '(You)';
     }
     else if(userId === this.room.host())

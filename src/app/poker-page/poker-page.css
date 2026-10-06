@@ -1,5 +1,5 @@
 .main-page{
-    gap: 30px;
+    gap: 25px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -7,9 +7,14 @@
 }
 
 .users{
-    margin-top: 20px;
+    width: fit-content;
+    max-width: 100%;
+
+    margin-top: 15px;
     display: flex;
     gap: 30px;
+
+    overflow-x: auto;
 }
 
 .results-container{

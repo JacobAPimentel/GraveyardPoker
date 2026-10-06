@@ -5,11 +5,11 @@
         <h1>
             @if(result.std === 0)
             {
-                AN UNANIMOUS DECISION!
+                UNANIMOUS DECISION
             }
             @else
             {
-                THE AVERAGE IS
+                AVERAGE
             }
         </h1>
         <p class="final-result" [style.color]="getAverageColor(result.std / ((this.room.choices.length - 1) / 2))">
