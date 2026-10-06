@@ -2,6 +2,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { Settings } from './settings';
 import { ServerState, User } from '../types';
 import { Subject } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable()
 export class SpiderWebsocket 
@@ -34,7 +35,7 @@ export class SpiderWebsocket
      */
     public connect(roomId: string): void 
     {
-        this.socket = new WebSocket(`ws://localhost:8787/room/${roomId}?name=${this.settings.displayName()}`);
+        this.socket = new WebSocket(`${environment.wsUrl}/room/${roomId}?name=${this.settings.displayName()}`);
 
         this.socket.addEventListener('open', () => 
         {

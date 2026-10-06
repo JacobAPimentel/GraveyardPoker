@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { form, FormField, maxLength, minLength, pattern, required } from '@angular/forms/signals';
 import { ActivatedRoute, Router } from '@angular/router';
+import { environment } from '../../../environments/environment';
 
 @Component({
   imports: [FormField],
@@ -29,7 +30,7 @@ export class RoomSelector
    */
   protected onCreateRoom(): void 
   {
-    this.http.get<{ roomId: string }>('http://localhost:8787/generate-room-code').subscribe(
+    this.http.get<{ roomId: string }>(`${environment.apiUrl}/generate-room-code`).subscribe(
       {
         next: response => 
         {
