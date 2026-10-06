@@ -38,40 +38,31 @@ export class PokerPage implements OnDestroy
   {
     if(!this.settings.displayName()) return;
 
-    this.connectToServer();
+    // Attempt to connect to the server.
+    const roomId = this.route.snapshot.queryParamMap.get('id');
+    if(!roomId || !/^[a-zA-Z0-9]{5}$/.test(roomId)) // invalid id
+    {
+        this.router.navigate(['graveyard'], {state: {errorCode: 400,errorMsg: 'Bad Request'}, skipLocationChange: true});
+        return;
+    }
     this.shouldIConnect.destroy();
+    this.websocket.connect(roomId);
 
+    //  Fallback disconnect if the page unloads.
+    window.addEventListener('beforeunload', this.unloadListener);
+
+    // Listen for a forced disconnect. (Such as the host leaving.).
     this.websocket.forceDisconnect$.subscribe(
     {
       complete: () => this.router.navigate(['.'], {state: {errorMsg: 'Lost connection to the host.'}})
     });
 
+    //Listen if the websocket errored when trying to createa it.
     this.websocket.websocketErrored$.subscribe(
     {
-      complete: () => this.router.navigate(['graveyard'], {state: {errorCode: 503,errorMsg: 'Service Unavailable'}})
+      complete: () => this.router.navigate(['graveyard'], {state: {errorCode: 503,errorMsg: 'Service Unavailable'},skipLocationChange: true})
     });
   });
-
-    /**
-   * Connect to the server.
-   * 
-   * If there is no room code as part of the query, navigate back to the home page.
-   */
-  public connectToServer(): void
-  {
-    const roomId = this.route.snapshot.queryParamMap.get('id');
-    if(roomId)
-    {
-      this.websocket.connect(roomId);
-      
-      // Force disconnect if the page unloads.
-      window.addEventListener('beforeunload', this.unloadListener);
-    }
-    else //No id, go back to home page.
-    {
-      this.router.navigate(['.']);
-    }
-  }
 
   /**
    * Disconnects the websocket on exiting the page (just in case.)
