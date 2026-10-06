@@ -28,6 +28,8 @@ export class SpiderWebsocket
     public revealVotes$ = new Subject<void>();
     public resetRound$ = new Subject<void>();
 
+    private pingId?: number;
+
     /**
      * Connect to the room and bind event listeners.
      * 
@@ -40,6 +42,9 @@ export class SpiderWebsocket
         this.socket.addEventListener('open', () => 
         {
             console.log('Connected to room');
+
+            //Ping the server every 30 seconds to prevent autodisconnect
+            this.pingId = setInterval(() =>  this.send({type: 'ping'}),30000);
         });
 
         this.socket.addEventListener('close', () => 
@@ -99,6 +104,7 @@ export class SpiderWebsocket
     {
         this.socket?.close();
         this.socket = null;
+        clearInterval(this.pingId);
         this.connected.set(false);
     }
 }
