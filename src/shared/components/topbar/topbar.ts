@@ -1,8 +1,9 @@
 import { Component, viewChild } from '@angular/core';
 import { NameModal } from '../name-modal/name-modal';
+import { RouterLink } from '@angular/router';
 
 @Component({
-  imports: [NameModal],
+  imports: [NameModal, RouterLink],
   selector: 'app-topbar',
   styleUrl: './topbar.css',
   templateUrl: './topbar.html',

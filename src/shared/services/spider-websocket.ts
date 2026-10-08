@@ -1,11 +1,11 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable, OnDestroy, signal } from '@angular/core';
 import { Settings } from './settings';
 import { ServerState, User } from '../types';
 import { Subject } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 @Injectable()
-export class SpiderWebsocket 
+export class SpiderWebsocket implements OnDestroy
 {
     /** 
      * Determine if the socket is connected. 
@@ -45,11 +45,12 @@ export class SpiderWebsocket
 
             //Ping the server every 30 seconds to prevent autodisconnect
             this.pingId = setInterval(() =>  this.send({type: 'ping'}),30000);
+            window.addEventListener('beforeunload',this.serviceUnloaded.bind(this));
         });
 
-        this.socket.addEventListener('close', () => 
+        this.socket.addEventListener('close', (closeEvent: CloseEvent) => 
         {
-            console.log('Disconnected from room');
+            console.log(`Disconnected ${closeEvent.wasClean ? 'cleanly' : 'abruptly'} (${closeEvent.code}): ${closeEvent.reason}`);
 
             // If it is still "connected", that means that a force connection occurred.
             if(this.connected())
@@ -100,11 +101,29 @@ export class SpiderWebsocket
     /**
      * Disconnects from the socket.
      */
-    public disconnect(): void
+    public disconnect(code?: number, reason?: string): void
     {
-        this.socket?.close();
+        this.socket?.close(code, reason);
         this.socket = null;
         clearInterval(this.pingId);
         this.connected.set(false);
+
+        window.removeEventListener('beforeunload',this.serviceUnloaded.bind(this));
+    }
+
+    /**
+     * Service unloaded, disconnect the socket.
+     */
+    public serviceUnloaded(): void
+    {
+        this.disconnect(1000, 'Page unloaded');
+    }
+    
+    /**
+     * The server (therefore, the page) was destroyed, disconnect the socket.
+     */
+    public ngOnDestroy(): void 
+    {
+        this.serviceUnloaded();
     }
 }

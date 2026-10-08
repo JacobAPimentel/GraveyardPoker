@@ -1,4 +1,4 @@
-import { Component, effect, inject, OnDestroy } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 import { Room } from '../../shared/services/room';
 import { UserCard } from '../../shared/components/user-card/user-card';
 import { Choices } from '../../shared/components/choices/choices';
@@ -15,7 +15,7 @@ import { Settings } from '../../shared/services/settings';
   providers: [SpiderWebsocket,Room],
   templateUrl: './poker-page.html',
 })
-export class PokerPage implements OnDestroy
+export class PokerPage
 {
   public settings = inject(Settings);
   public router = inject(Router);
@@ -23,12 +23,6 @@ export class PokerPage implements OnDestroy
   public websocket = inject(SpiderWebsocket);
 
   protected room = inject(Room);
-
-  // Fallback function to disconnect the socket if it page were to unload.
-  private unloadListener = (): void =>
-  {
-      this.websocket.disconnect();
-  };
 
   /**
    * Determine if the page should automatically connect or not. If there is NOT a display name, then do not connect
@@ -48,13 +42,10 @@ export class PokerPage implements OnDestroy
     this.shouldIConnect.destroy();
     this.websocket.connect(roomId);
 
-    //  Fallback disconnect if the page unloads.
-    window.addEventListener('beforeunload', this.unloadListener);
-
     // Listen for a forced disconnect. (Such as the host leaving.).
     this.websocket.forceDisconnect$.subscribe(
     {
-      complete: () => this.router.navigate(['.'], {state: {errorMsg: 'Lost connection to the host.'}})
+      complete: () => this.router.navigate(['/'], {state: {errorMsg: 'Lost connection to the host.'}})
     });
 
     //Listen if the websocket errored when trying to createa it.
@@ -63,15 +54,6 @@ export class PokerPage implements OnDestroy
       complete: () => this.router.navigate(['graveyard'], {state: {errorCode: 503,errorMsg: 'Service Unavailable'},skipLocationChange: true})
     });
   });
-
-  /**
-   * Disconnects the websocket on exiting the page (just in case.)
-   */
-  public ngOnDestroy(): void 
-  {
-    this.websocket.disconnect();
-    window.removeEventListener('beforeunload',this.unloadListener);
-  }
 
   /**
    * The main button was clicked. Decide between flushing or revealing votes.
