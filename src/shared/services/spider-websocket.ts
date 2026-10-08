@@ -41,7 +41,7 @@ export class SpiderWebsocket implements OnDestroy
 
         this.socket.addEventListener('open', () => 
         {
-            console.log('Connected to room');
+            this.log('Connected to room');
 
             //Ping the server every 30 seconds to prevent autodisconnect
             this.pingId = setInterval(() =>  this.send({type: 'ping'}),30000);
@@ -50,7 +50,7 @@ export class SpiderWebsocket implements OnDestroy
 
         this.socket.addEventListener('close', (closeEvent: CloseEvent) => 
         {
-            console.log(`Disconnected ${closeEvent.wasClean ? 'cleanly' : 'abruptly'} (${closeEvent.code}): ${closeEvent.reason}`);
+            this.log(`Disconnected ${closeEvent.wasClean ? 'cleanly' : 'abruptly'} (${closeEvent.code}): ${closeEvent.reason}`);
 
             // If it is still "connected", that means that a force connection occurred.
             if(this.connected())
@@ -125,5 +125,15 @@ export class SpiderWebsocket implements OnDestroy
     public ngOnDestroy(): void 
     {
         this.serviceUnloaded();
+    }
+
+    /**
+     * Log a message with a timestamp.
+     * 
+     * @param message - The message you want to be outpatted
+     */
+    public log(message: string): void
+    {
+        console.log(`[${new Date().toLocaleString()}] ${message}`);
     }
 }
