@@ -8,7 +8,7 @@
 {
     <div class="main-page">
         <div class="users">
-            @for (user of room.userSignalList(); track user().id)
+            @for (user of room.userSignalList(); track user().userId)
             {
                 <app-user-card [user]="user()"/>
             }

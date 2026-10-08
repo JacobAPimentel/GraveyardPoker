@@ -32,7 +32,7 @@ export class UserCard
   {
     return !this.noVote()
            && !this.room.revealed() 
-           && untracked(this.user).id !== untracked(this.room.userId);
+           && untracked(this.user).userId !== untracked(this.room.userId);
   });
 
   /**
@@ -40,7 +40,7 @@ export class UserCard
    */
   protected label = computed(() => 
   {
-    const userId = untracked(this.user).id;
+    const userId = untracked(this.user).userId;
 
     if(userId === this.room.userId())
     {

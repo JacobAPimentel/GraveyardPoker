@@ -43,9 +43,9 @@ export class PokerPage
     this.websocket.connect(roomId);
 
     // Listen for a forced disconnect. (Such as the host leaving.).
-    this.websocket.forceDisconnect$.subscribe(
+    this.websocket.forceDisconnect$.subscribe((errorMsg?: string) =>
     {
-      complete: () => this.router.navigate(['/'], {state: {errorMsg: 'Lost connection to the host.'}})
+      this.router.navigate(['/'], {state: {errorMsg: errorMsg || 'Connection was lost.'}});
     });
 
     //Listen if the websocket errored when trying to createa it.

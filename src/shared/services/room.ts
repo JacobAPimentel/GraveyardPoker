@@ -90,13 +90,13 @@ export class Room
      */
     public addUser(user: User): void
     {
-        this.users[user.id] = signal(user);
+        this.users[user.userId] = signal(user);
 
         //Update the array list.
         this.userSignalList.update((val: WritableSignal<User>[]) => 
         {
             const list = [...val];
-            list.push(this.users[user.id]);
+            list.push(this.users[user.userId]);
             list.sort((a: WritableSignal<User>,b: WritableSignal<User>) => 
             {
                 return a().name.localeCompare(b().name);
@@ -129,7 +129,7 @@ export class Room
      */
     public updateUser(user: User): void
     {
-        this.users[user.id].set(user);
+        this.users[user.userId].set(user);
     }
 
     /**

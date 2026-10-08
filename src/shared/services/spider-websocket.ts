@@ -18,7 +18,7 @@ export class SpiderWebsocket implements OnDestroy
     private socket: WebSocket | null = null;
 
     //LISTENERS
-    public forceDisconnect$ = new Subject<void>();
+    public forceDisconnect$ = new Subject<string | undefined>();
     public websocketErrored$ = new Subject<void>();
 
     public initialJoin$ = new Subject<{userId: string, state: ServerState}>();
@@ -37,7 +37,12 @@ export class SpiderWebsocket implements OnDestroy
      */
     public connect(roomId: string): void 
     {
-        this.socket = new WebSocket(`${environment.wsUrl}/room/${roomId}?name=${this.settings.displayName()}`);
+        const params = new URLSearchParams({
+            name: this.settings.displayName(),
+            accessId: this.settings.accessId()
+        });
+
+        this.socket = new WebSocket(`${environment.wsUrl}/room/${roomId}?${params}`);
 
         this.socket.addEventListener('open', () => 
         {
@@ -55,7 +60,7 @@ export class SpiderWebsocket implements OnDestroy
             // If it is still "connected", that means that a force connection occurred.
             if(this.connected())
             {
-                this.forceDisconnect$.complete();
+                this.forceDisconnect$.next(closeEvent.reason);
                 this.disconnect();
             }
         });
@@ -75,6 +80,14 @@ export class SpiderWebsocket implements OnDestroy
             switch(message.type)
             {
                 case 'initialJoin': this.initialJoin$.next(message);
+
+                                    //Set the user ID if the user did not have one prior.
+                                    if(!this.settings.accessId())
+                                    {
+                                        localStorage.setItem('accessId',message.accessId);
+                                        this.settings.accessId.set(message.accessId);
+                                    }
+
                                     this.connected.set(true);
                                     break;
                 case 'connected': this.userConnected$.next(message.user); break;
@@ -105,9 +118,9 @@ export class SpiderWebsocket implements OnDestroy
     {
         this.socket?.close(code, reason);
         this.socket = null;
-        clearInterval(this.pingId);
         this.connected.set(false);
-
+        
+        clearInterval(this.pingId);
         window.removeEventListener('beforeunload',this.serviceUnloaded.bind(this));
     }
 
