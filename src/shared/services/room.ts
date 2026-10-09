@@ -64,7 +64,14 @@ export class Room
     {
         for (const user of Object.values(state.users)) 
         {
-            this.addUser(user);
+            if(this.users[user.userId]) // User already exists, update them.
+            {
+                this.updateUser(user);
+            }
+            else
+            {
+                this.addUser(user);
+            }
         }
 
         this.revealed.set(state.revealed);
