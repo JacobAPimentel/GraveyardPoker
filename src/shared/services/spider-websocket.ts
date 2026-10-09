@@ -1,8 +1,11 @@
 import { inject, Injectable, OnDestroy, signal } from '@angular/core';
 import { Settings } from './settings';
-import { ServerState, User } from '../types';
+import { CustomCodes, ServerState, User } from '../types';
 import { Subject } from 'rxjs';
 import { environment } from '../../environments/environment';
+
+// How many attempts should the user take to try to reconnect?
+const MAX_RECONNECT_ATTEMPTS = 1;
 
 @Injectable()
 export class SpiderWebsocket implements OnDestroy
@@ -15,12 +18,11 @@ export class SpiderWebsocket implements OnDestroy
     public connected = signal(false);
     private settings = inject(Settings);
     
+    private roomId?: string;
     private socket: WebSocket | null = null;
 
     //LISTENERS
-    public forceDisconnect$ = new Subject<string | undefined>();
-    public websocketErrored$ = new Subject<void>();
-
+    public forceDisconnect$ = new Subject<string>();
     public initialJoin$ = new Subject<{userId: string, state: ServerState}>();
     public userConnected$ = new Subject<User>();
     public userDisconnected$ = new Subject<string>();
@@ -29,6 +31,10 @@ export class SpiderWebsocket implements OnDestroy
     public resetRound$ = new Subject<void>();
 
     private pingId?: number;
+
+    //Reconnection Status
+    private disconnectReason: string | null = null;
+    private reconnectAttempts = 0;
 
     /**
      * Connect to the room and bind event listeners.
@@ -47,6 +53,9 @@ export class SpiderWebsocket implements OnDestroy
         this.socket.addEventListener('open', () => 
         {
             this.log('Connected to room');
+            this.disconnectReason = null;
+            this.reconnectAttempts = 0;
+            this.roomId = roomId;
 
             //Ping the server every 30 seconds to prevent autodisconnect
             this.pingId = setInterval(() =>  this.send({type: 'ping'}),30000);
@@ -58,18 +67,36 @@ export class SpiderWebsocket implements OnDestroy
             this.log(`Disconnected ${closeEvent.wasClean ? 'cleanly' : 'abruptly'} (${closeEvent.code}): ${closeEvent.reason}`);
 
             // If it is still "connected", that means that a force connection occurred.
-            if(this.connected())
+            // Or, if there is a disconnectReason, then we are trying to reconnect.
+            if(this.connected() || this.disconnectReason)
             {
-                this.forceDisconnect$.next(closeEvent.reason);
-                this.disconnect();
+                if(!this.disconnectReason)
+                {
+                    this.disconnect();
+                    this.disconnectReason = closeEvent.reason || 'Connection was lost.';
+                }    
+
+                // If it was clean, then it is an expected server event. No need to try to reconnect.
+                if(closeEvent.wasClean || this.reconnectAttempts >= MAX_RECONNECT_ATTEMPTS)
+                {
+                    this.forceDisconnect$.next(this.disconnectReason);
+                }
+                else // Try to reconnect.
+                {
+                    this.log('Trying to reconnect...');
+                    this.reconnectAttempts++;
+                    this.connect(this.roomId!);
+                }
+            }
+            else if(!this.roomId) // Not having a roomId means there was never a successful connect...
+            {
+               this.forceDisconnect$.next('Failed to connect. Please try again later.'); 
             }
         });
 
         this.socket.addEventListener('error', error => 
         {
             console.error('WebSocket error:', error);
-
-            this.websocketErrored$.complete();
         });
 
         // Main web socket messages
@@ -129,7 +156,7 @@ export class SpiderWebsocket implements OnDestroy
      */
     public serviceUnloaded(): void
     {
-        this.disconnect(1000, 'Page unloaded');
+        this.disconnect(CustomCodes.PAGE_UNLOADED, 'Page unloaded');
     }
     
     /**

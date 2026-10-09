@@ -17,5 +17,6 @@ export type Message = {
 
 export const CustomCodes = {
 	TRANSFERRED: 4000,
-	HOST_DISCONNECTED: 4001
+	HOST_DISCONNECTED: 4001,
+    PAGE_UNLOADED: 4002
 } as const;

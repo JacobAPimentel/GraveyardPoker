@@ -45,13 +45,7 @@ export class PokerPage
     // Listen for a forced disconnect. (Such as the host leaving.).
     this.websocket.forceDisconnect$.subscribe((errorMsg?: string) =>
     {
-      this.router.navigate(['/'], {state: {errorMsg: errorMsg || 'Connection was lost.'}});
-    });
-
-    //Listen if the websocket errored when trying to createa it.
-    this.websocket.websocketErrored$.subscribe(
-    {
-      complete: () => this.router.navigate(['graveyard'], {state: {errorCode: 503,errorMsg: 'Service Unavailable'},skipLocationChange: true})
+      this.router.navigate(['/'], {state: {errorMsg: errorMsg}});
     });
   });
 

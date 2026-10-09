@@ -40,12 +40,10 @@ export class RoomSelector
         {
           console.error('Failed to generate room code:', error);
 
-          if(error.status === 0)
+          if(error.status === 502)
           {
-             this.router.navigate(['graveyard'], {state: {errorCode: 503,errorMsg: 'Service Unavailable'}});
+             this.router.navigate(['graveyard'], {state: {errorCode: error.status,errorMsg: error.statusText}});
           }
-
-          return;
         }
       });
   }
