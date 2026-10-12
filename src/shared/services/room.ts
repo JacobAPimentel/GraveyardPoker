@@ -62,16 +62,13 @@ export class Room
      */
     public setState(state: ServerState): void
     {
+        // Clear out any previous values (in case they reconnect)
+        this.users = {};
+        this.userSignalList.set([]);
+
         for (const user of Object.values(state.users)) 
         {
-            if(this.users[user.userId]) // User already exists, update them.
-            {
-                this.updateUser(user);
-            }
-            else
-            {
-                this.addUser(user);
-            }
+            this.addUser(user);
         }
 
         this.revealed.set(state.revealed);

@@ -5,7 +5,7 @@ import { Subject } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 // How many attempts should the user take to try to reconnect?
-const MAX_RECONNECT_ATTEMPTS = 1;
+const MAX_RECONNECT_ATTEMPTS = 3;
 
 @Injectable()
 export class SpiderWebsocket implements OnDestroy
@@ -31,6 +31,7 @@ export class SpiderWebsocket implements OnDestroy
     public resetRound$ = new Subject<void>();
 
     private pingId?: number;
+    private onUnload = this.serviceUnloaded.bind(this);
 
     //Reconnection Status
     private disconnectReason: string | null = null;
@@ -59,10 +60,10 @@ export class SpiderWebsocket implements OnDestroy
 
             //Ping the server every 30 seconds to prevent autodisconnect
             this.pingId = setInterval(() =>  this.send({type: 'ping'}),30000);
-            window.addEventListener('beforeunload',this.serviceUnloaded.bind(this));
+            window.addEventListener('beforeunload',this.onUnload);
         });
 
-        this.socket.addEventListener('close', (closeEvent: CloseEvent) => 
+        this.socket.addEventListener('close', async (closeEvent: CloseEvent) => 
         {
             this.log(`Disconnected ${closeEvent.wasClean ? 'cleanly' : 'abruptly'} (${closeEvent.code}): ${closeEvent.reason}`);
 
@@ -83,8 +84,14 @@ export class SpiderWebsocket implements OnDestroy
                 }
                 else // Try to reconnect.
                 {
-                    this.log('Trying to reconnect...');
                     this.reconnectAttempts++;
+
+                    if (this.reconnectAttempts > 1) // Wait n second in between each attempt.
+                    {
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                    }
+                    
+                    this.log(`Trying to reconnect [${this.reconnectAttempts}]...`);
                     this.connect(this.roomId!);
                 }
             }
@@ -106,7 +113,7 @@ export class SpiderWebsocket implements OnDestroy
 
             switch(message.type)
             {
-                case 'initialJoin': this.initialJoin$.next(message);
+                case 'initialJoin': this.initialJoin$.next({userId: message.userId, state: message.state});
 
                                     //Set the user ID if the user did not have one prior.
                                     if(!this.settings.accessId())
@@ -148,7 +155,7 @@ export class SpiderWebsocket implements OnDestroy
         this.connected.set(false);
         
         clearInterval(this.pingId);
-        window.removeEventListener('beforeunload',this.serviceUnloaded.bind(this));
+        window.removeEventListener('beforeunload',this.onUnload);
     }
 
     /**
