@@ -1,4 +1,4 @@
-import { computed, inject, Injectable, signal, WritableSignal } from '@angular/core';
+import { computed, effect, inject, Injectable, signal, WritableSignal } from '@angular/core';
 import { Message, ServerState, User } from '../types';
 import { SpiderWebsocket } from './spider-websocket';
 
@@ -33,6 +33,18 @@ export class Room
     public isHost = computed(() => this.host() === this.userId());
 
     /**
+     * onDisconnect reset the room state to the default empty. If the
+     * user reconnect, then onInitialJoin will be restore the state.
+     */
+    public onDisconnect = effect(() => 
+    {
+        if(!this.socket.connected())
+        {
+            this.resetState();
+        }
+    });
+
+    /**
      * Set up websocket listeners.
      */
     public constructor()
@@ -62,10 +74,6 @@ export class Room
      */
     public setState(state: ServerState): void
     {
-        // Clear out any previous values (in case they reconnect)
-        this.users = {};
-        this.userSignalList.set([]);
-
         for (const user of Object.values(state.users)) 
         {
             this.addUser(user);
@@ -83,8 +91,23 @@ export class Room
      */
     public onInitialJoin(joinState: {userId: string, state: ServerState}): void
     {
-        this.setUserId(joinState.userId);
         this.setState(joinState.state);
+        this.setUserId(joinState.userId);
+    }
+
+    /**
+     * Reset the state back to default. Occurs when a disconnect happens.
+     * 
+     * Setting the signals to the default will also allow change detection.
+     */
+    public resetState(): void
+    {
+        this.users = {};
+        this.userSignalList.set([]);
+
+        this.revealed.set(false);
+        this.host.set('');
+        this.userId.set('');
     }
     
     /**

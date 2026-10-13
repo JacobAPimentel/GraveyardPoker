@@ -50,6 +50,9 @@ h2{
     color: var(--color-text);
 }
 
+button:hover{
+    filter: brightness(90%);
+}
 .img-button{
     > img,
     > svg {
@@ -67,10 +70,6 @@ h2{
 
     background-color: var(--color-button-primary);
     color: var(--color-text-light);
-
-    &:hover{
-        filter: brightness(90%);
-    }
 }
 
 .error{

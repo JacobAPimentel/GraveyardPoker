@@ -7,6 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { SpiderWebsocket } from '../../shared/services/spider-websocket';
 import { LoadingCircle } from '../../shared/components/loading-circle/loading-circle';
 import { Settings } from '../../shared/services/settings';
+import { TopbarService } from '../../shared/services/topbar-service';
 
 @Component({
   imports: [UserCard, Choices, Results, LoadingCircle],
@@ -20,6 +21,7 @@ export class PokerPage
   public settings = inject(Settings);
   public router = inject(Router);
   public route = inject(ActivatedRoute);
+  public topbarService = inject(TopbarService);
   public websocket = inject(SpiderWebsocket);
 
   protected room = inject(Room);
@@ -41,6 +43,8 @@ export class PokerPage
     }
     this.shouldIConnect.destroy();
     this.websocket.connect(roomId);
+
+    this.topbarService.setTools({'CopyLink': {link: window.location.origin + this.router.url, display: roomId}});
 
     // Listen for a forced disconnect. (Such as the host leaving.).
     this.websocket.forceDisconnect$.subscribe((errorMsg?: string) =>
