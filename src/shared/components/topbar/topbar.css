@@ -4,6 +4,7 @@
     align-items: center;
     justify-content: space-between;
 
+    flex-shrink: 0;
     height: 3rem;
     width: 100%;
     padding: 0px 10px;
