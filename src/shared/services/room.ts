@@ -1,10 +1,12 @@
-import { computed, effect, inject, Injectable, signal, WritableSignal } from '@angular/core';
+import { computed, effect, inject, Injectable, signal, untracked, WritableSignal } from '@angular/core';
 import { Message, ServerState, User } from '../types';
 import { SpiderWebsocket } from './spider-websocket';
+import { Settings } from './settings';
 
 @Injectable()
 export class Room 
 {
+    public settings = inject(Settings);
     public socket = inject(SpiderWebsocket);
 
     public userId = signal<string>(''); // the id of the user.
@@ -34,7 +36,7 @@ export class Room
 
     /**
      * onDisconnect reset the room state to the default empty. If the
-     * user reconnect, then onInitialJoin will be restore the state.
+     * user reconnect, then onInitialJoin will restore the state.
      */
     public onDisconnect = effect(() => 
     {
@@ -42,6 +44,22 @@ export class Room
         {
             this.resetState();
         }
+    });
+
+    /**
+     * If the user changes their name, update the user signal and let the server know.
+     */
+    public onNameChange = effect(() => 
+    {
+        const name = this.settings.displayName();
+
+        const userId = untracked(this.userId);
+        const userSignal = this.users[userId];
+        if(!userSignal || untracked(userSignal)?.name === name) return;
+    
+        userSignal.update(user => ({ ...user, name }));
+        this.userSignalList.update(users => [...this.sortByName(users)]);
+        this.sendToSocket(userId,{type: 'name-change',name});
     });
 
     /**
@@ -124,12 +142,26 @@ export class Room
         {
             const list = [...val];
             list.push(this.users[user.userId]);
-            list.sort((a: WritableSignal<User>,b: WritableSignal<User>) => 
-            {
-                return a().name.localeCompare(b().name);
-            });
+            this.sortByName(list);
             return list;
         });
+    }
+
+    /**
+     * Sort the users list by name.
+     * 
+     * @param users - List of user signals
+     * 
+     * @returns - Input value (list of user signals)
+     */
+    public sortByName(users: WritableSignal<User>[]): WritableSignal<User>[]
+    {
+        users.sort((a: WritableSignal<User>,b: WritableSignal<User>) => 
+        {
+            return untracked(a).name.localeCompare(untracked(b).name);
+        });
+
+        return users;
     }
 
     /**
@@ -156,7 +188,14 @@ export class Room
      */
     public updateUser(user: User): void
     {
+        const oldUser = this.users[user.userId]();
         this.users[user.userId].set(user);
+
+        //Name change, update sort.
+        if(oldUser.name !== user.name)
+        {
+            this.userSignalList.update(users => [...this.sortByName(users)]);
+        }
     }
 
     /**
@@ -180,18 +219,8 @@ export class Room
      */
     public voted(userId: string, vote: number | null): void
     {
-        this.users[userId].update((val: User) => 
-        {
-             return {
-                ...val,
-                vote
-            };
-        });
-
-        this.sendToSocket(userId,{
-            type: 'voted',
-            vote
-        });
+        this.users[userId].update((val: User) => ({...val,vote}));
+        this.sendToSocket(userId,{type: 'voted',vote});
     }
 
     /**
