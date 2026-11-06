@@ -45,8 +45,7 @@ export class SpiderWebsocket implements OnDestroy
     public connect(roomId: string): void 
     {
         const params = new URLSearchParams({
-            name: this.settings.displayName(),
-            accessId: this.settings.accessId()
+            name: this.settings.displayName()
         });
 
         this.socket = new WebSocket(`${environment.wsUrl}/room/${roomId}?${params}`);
@@ -114,14 +113,6 @@ export class SpiderWebsocket implements OnDestroy
             switch(message.type)
             {
                 case 'initialJoin': this.initialJoin$.next({userId: message.userId, state: message.state});
-
-                                    //Set the user ID if the user did not have one prior.
-                                    if(!this.settings.accessId())
-                                    {
-                                        localStorage.setItem('accessId',message.accessId);
-                                        this.settings.accessId.set(message.accessId);
-                                    }
-
                                     this.connected.set(true);
                                     break;
                 case 'connected': this.userConnected$.next(message.user); break;

@@ -4,5 +4,4 @@ import { Service, signal } from '@angular/core';
 export class Settings 
 {
     public displayName = signal<string>(localStorage.getItem('displayName') ?? '');
-    public accessId = signal<string>(localStorage.getItem('accessId') ?? '');
 }
